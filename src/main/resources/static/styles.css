@@ -1,6 +1,6 @@
 :root {
-    --primary: #007BFF;
-    --primary-hover: #0056b3;
+    --primary: #ee0606; /* Cambio de color a Indigo */
+    --primary-hover: #4f46e5;
     --bg: #f8fafc;
     --card-bg: #ffffff;
     --text: #1e293b;
