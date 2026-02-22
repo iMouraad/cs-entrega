@@ -55,7 +55,7 @@ jobs:
               app:
                 image: carlospatronerboop/ms-usuarios:latest
                 ports:
-                  - "8080:8080"
+                  - "8080:8092"
                 environment:
                   - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ms_usuarios_db
                   - SPRING_DATASOURCE_USERNAME=postgres
