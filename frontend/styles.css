@@ -1,0 +1,170 @@
+:root {
+    --primary: #007BFF;
+    --primary-hover: #0056b3;
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+
+    --status-pending: #64748b;
+    --status-sent: #3b82f6;
+    --status-delivered: #22c55e;
+    --status-cancelled: #ef4444;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0; padding: 20px;
+}
+
+.container { max-width: 1200px; margin: 0 auto; }
+
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+
+.button {
+    padding: 10px 22px; border: none; border-radius: 8px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+}
+
+.button.primary { background: var(--primary); color: white; }
+.button.primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+/* Stats Cards */
+.stats-dashboard { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
+.stat-card {
+    flex: 1; min-width: 200px; background: white; border-radius: 12px;
+    padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    text-align: center; border-left: 6px solid transparent;
+    cursor: pointer; transition: 0.3s;
+}
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+.stat-value { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
+.stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+
+.stat-pendiente { border-left-color: var(--status-pending); color: var(--status-pending); }
+.stat-enviado { border-left-color: var(--status-sent); color: var(--status-sent); }
+.stat-entregado { border-left-color: var(--status-delivered); color: var(--status-delivered); }
+.stat-cancelado { border-left-color: var(--status-cancelled); color: var(--status-cancelled); }
+
+/* Buscador */
+.search-bar {
+    display: flex; gap: 12px; margin-bottom: 30px;
+    background: white; padding: 10px; border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    border: 1px solid var(--border);
+}
+.search-bar input { flex: 1; border: none; outline: none; padding: 10px; font-size: 15px; font-family: inherit; }
+
+/* Grid de Tarjetas */
+.deliveries-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+.delivery-card {
+    background: white; border-radius: 16px; padding: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border);
+}
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.status-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; color: white; }
+.status-PENDIENTE { background: var(--status-pending); }
+.status-ENVIADO { background: var(--status-sent); }
+.status-ENTREGADO { background: var(--status-delivered); }
+.status-CANCELADO { background: var(--status-cancelled); }
+
+.card-body p { margin: 8px 0; font-size: 14px; color: var(--text-muted); }
+.card-body p strong { color: var(--text); }
+.card-footer { margin-top: 20px; display: flex; gap: 10px; border-top: 1px solid var(--border); padding-top: 15px; }
+
+.card-button {
+    flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border);
+    background: #f8fafc; cursor: pointer; font-size: 13px; font-weight: 500;
+}
+.history-btn { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+
+/* DISEÑO DEL MODAL Y FORMULARIO (CORREGIDO) */
+.modal {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: white; border-radius: 16px; padding: 30px;
+    width: 90%; max-width: 480px; z-index: 1001;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.modal-header h2 { margin: 0; font-size: 22px; font-weight: 700; }
+
+.form-group {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+.form-group input, .form-group select {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+}
+.form-group input:focus { border-color: var(--primary); }
+
+.form-actions { margin-top: 25px; }
+.form-actions .button { width: 100%; padding: 14px; font-size: 16px; }
+
+/* DISEÑO DEL HISTORIAL LATERAL (PRESERVADO) */
+.drawer {
+    position: fixed; top: 0; right: 0; width: 420px; height: 100%;
+    background: white; z-index: 1001; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 40px; box-sizing: border-box; box-shadow: -15px 0 35px rgba(0,0,0,0.1);
+}
+.drawer.hidden { transform: translateX(100%); }
+
+.drawer-info-box {
+    background: #f1f5f9;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+.drawer-info-box p { margin: 8px 0; font-size: 14px; }
+
+.timeline {
+    border-left: 2px solid var(--border);
+    margin-left: 10px;
+    padding-left: 25px;
+    position: relative;
+}
+.timeline-item { position: relative; margin-bottom: 35px; }
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -32px;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid var(--primary);
+    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+    z-index: 2;
+}
+.timeline-item h4 { margin: 0 0 10px 0; font-size: 16px; font-weight: 700; color: var(--text); }
+.timeline-item p { margin: 0; font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+/* Otros */
+.toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 10000; }
+.toast {
+    background: #1e293b; color: white; padding: 16px 24px; border-radius: 12px;
+    margin-top: 12px; display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: slideIn 0.3s ease-out;
+}
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; }
+.hidden { display: none !important; }
+.close-btn { background: #f1f5f9; border: none; font-size: 18px; cursor: pointer; border-radius: 4px; width: 28px; height: 28px; color: var(--text-muted); }

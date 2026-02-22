@@ -1,0 +1,198 @@
+openapi: 3.0.3
+info:
+  title: API de Microservicio de Entregas
+  description: >
+    Microservicio responsable de gestionar las entregas (envíos) dentro del sistema
+    de tienda de componentes de computadoras.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8089
+    description: Servidor de desarrollo local
+
+tags:
+  - name: Entregas
+    description: Operaciones relacionadas con la gestión de entregas
+
+paths:
+  /api/entregas:
+    get:
+      tags:
+        - Entregas
+      summary: Lista todas las entregas
+      operationId: listarEntregas
+      responses:
+        "200":
+          description: Lista de entregas obtenida con éxito.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EntregaDto"
+
+    post:
+      tags:
+        - Entregas
+      summary: Crea una nueva entrega
+      operationId: crearEntrega
+      requestBody:
+        description: Datos necesarios para registrar una entrega.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EntregaCreateRequest"
+      responses:
+        "201":
+          description: Entrega creada exitosamente.
+          headers:
+            Location:
+              description: La URL para acceder a la entrega recién creada.
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntregaDto"
+
+  /api/entregas/{id}:
+    put:
+      tags:
+        - Entregas
+      summary: Actualiza una entrega existente por su ID
+      operationId: actualizarEntrega
+      parameters:
+        - name: id
+          in: path
+          description: ID de la entrega a actualizar.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Datos de la entrega con los cambios a aplicar.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EntregaUpdateRequest"
+      responses:
+        "200":
+          description: Entrega actualizada exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntregaDto"
+        "404":
+          description: No se encontró la entrega con el ID especificado.
+
+components:
+  schemas:
+    EntregaDto:
+      type: object
+      description: Representa una entrega (envío) registrada en el sistema.
+      required:
+        - orderId
+        - address
+        - status
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Identificador único de la entrega.
+          readOnly: true
+        orderId:
+          type: integer
+          format: int64
+          description: ID de la orden asociada a la entrega.
+        address:
+          type: string
+          description: Dirección a la que se debe realizar la entrega.
+          maxLength: 255
+        status:
+          type: string
+          description: Estado actual de la entrega.
+          enum:
+            - PENDIENTE
+            - ENVIADO
+            - ENTREGADO
+            - CANCELADO
+        trackingNumber:
+          type: string
+          description: Número de seguimiento del envío.
+          nullable: true
+        email:
+          type: string
+          format: email
+          description: Correo electrónico del cliente.
+          nullable: true
+
+    EntregaCreateRequest:
+      type: object
+      description: Datos para crear una entrega.
+      required:
+        - orderId
+        - address
+        - status
+      properties:
+        orderId:
+          type: integer
+          format: int64
+          description: ID de la orden asociada a la entrega.
+        address:
+          type: string
+          description: Dirección a la que se debe realizar la entrega.
+          maxLength: 255
+        status:
+          type: string
+          description: Estado inicial de la entrega.
+          enum:
+            - PENDIENTE
+            - ENVIADO
+            - ENTREGADO
+            - CANCELADO
+        trackingNumber:
+          type: string
+          description: Número de seguimiento del envío.
+          nullable: true
+        email:
+          type: string
+          format: email
+          description: Correo electrónico del cliente.
+          nullable: true
+
+    EntregaUpdateRequest:
+      type: object
+      description: Datos para actualizar una entrega existente.
+      required:
+        - orderId
+        - address
+        - status
+      properties:
+        orderId:
+          type: integer
+          format: int64
+          description: ID de la orden asociada a la entrega.
+        address:
+          type: string
+          description: Dirección a la que se debe realizar la entrega.
+          maxLength: 255
+        status:
+          type: string
+          description: Estado actual de la entrega.
+          enum:
+            - PENDIENTE
+            - ENVIADO
+            - ENTREGADO
+            - CANCELADO
+        trackingNumber:
+          type: string
+          description: Número de seguimiento del envío.
+          nullable: true
+        email:
+          type: string
+          format: email
+          description: Correo electrónico del cliente.
+          nullable: true

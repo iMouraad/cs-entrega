@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Base de Datos
+  db:
+    image: postgres:15-alpine
+    container_name: ms-usuarios-db
+    restart: always
+    environment:
+      POSTGRES_DB: microservicio_db
+      POSTGRES_USER: msdb
+      POSTGRES_PASSWORD: holamundo123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # Aplicación (Backend + Frontend integrado)
+  app:
+    build: .
+    container_name: ms-usuarios-app
+    restart: always
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/microservicio_db
+      SPRING_DATASOURCE_USERNAME: msdb
+      SPRING_DATASOURCE_PASSWORD: holamundo123
+      # IMPORTANTE: Esto crea las tablas automáticamente si no existen
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SERVER_PORT: 8092
+    ports:
+      - "80:8092" # Exponemos el puerto 80 (HTTP estándar) hacia el 8092 del contenedor
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
