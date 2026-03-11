@@ -40,6 +40,12 @@ public class EntregaController implements EntregasApi {
         return ResponseEntity.ok(service.obtenerClientesExternos());
     }
 
+    @GetMapping("/api/entregas/preparar/{orderId}")
+    public ResponseEntity<EntregaDto> prepararEntrega(@PathVariable Long orderId) {
+        Entrega preEntrega = service.prepararEntregaPorOrden(orderId);
+        return ResponseEntity.ok(EntregaMapper.toDto(preEntrega));
+    }
+
     @Override
     public ResponseEntity<List<EntregaDto>> listarEntregas() {
         List<EntregaDto> dtos = service.listar()

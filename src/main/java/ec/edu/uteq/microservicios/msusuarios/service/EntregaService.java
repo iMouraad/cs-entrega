@@ -17,4 +17,5 @@ public interface EntregaService {
     Map<String, Long> obtenerEstadisticas();
     List<FacturaDTO> obtenerFacturasExternas();
     List<ClienteDTO> obtenerClientesExternos();
+    Entrega prepararEntregaPorOrden(Long orderId);
 }

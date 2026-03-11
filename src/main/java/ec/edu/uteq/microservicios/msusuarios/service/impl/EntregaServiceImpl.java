@@ -87,6 +87,47 @@ public class EntregaServiceImpl implements EntregaService {
     }
 
     @Override
+    public Entrega prepararEntregaPorOrden(Long orderId) {
+        log.info("Preparando datos para la Orden #{}", orderId);
+        
+        // 1. Buscar la Factura/Orden
+        List<FacturaDTO> facturas = obtenerFacturasExternas();
+        FacturaDTO factura = facturas.stream()
+                .filter(f -> f.getId().equals(orderId))
+                .findFirst()
+                .orElse(null);
+
+        Entrega entregaPrevia = new Entrega();
+        entregaPrevia.setOrderId(orderId);
+        entregaPrevia.setStatus(Entrega.Estado.PENDIENTE);
+
+        if (factura != null) {
+            // 2. Intentar buscar al cliente para obtener dirección y email real
+            List<ClienteDTO> clientes = obtenerClientesExternos();
+            // Buscamos por nombre o podríamos buscar por ID si la factura lo tuviera
+            ClienteDTO cliente = clientes.stream()
+                    .filter(c -> factura.getCliente().contains(c.getNombre()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (cliente != null) {
+                entregaPrevia.setAddress(cliente.getDireccion());
+                entregaPrevia.setEmail(cliente.getEmail());
+            } else {
+                // Datos por defecto si no hay match de cliente
+                entregaPrevia.setAddress("Dirección pendiente de confirmar");
+                entregaPrevia.setEmail("cliente@ejemplo.com");
+            }
+        } else {
+            // Si no existe la orden en facturación
+            entregaPrevia.setAddress("Orden no encontrada en Facturación");
+            entregaPrevia.setStatus(Entrega.Estado.CANCELADO);
+        }
+
+        return entregaPrevia;
+    }
+
+    @Override
     public List<Entrega> listar() {
         return repo.findAll();
     }
