@@ -1,25 +1,39 @@
 package ec.edu.uteq.microservicios.msusuarios.service.impl;
 
 import ec.edu.uteq.microservicios.msusuarios.model.Entrega;
+import ec.edu.uteq.microservicios.msusuarios.model.FacturaDTO;
 import ec.edu.uteq.microservicios.msusuarios.repository.EntregaRepository;
 import ec.edu.uteq.microservicios.msusuarios.service.EntregaService;
 import ec.edu.uteq.microservicios.msusuarios.service.EmailService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class EntregaServiceImpl implements EntregaService {
 
     private final EntregaRepository repo;
     private final EmailService emailService;
+    private final RestTemplate restTemplate;
 
-    public EntregaServiceImpl(EntregaRepository repo, EmailService emailService) {
+    public EntregaServiceImpl(EntregaRepository repo, EmailService emailService, RestTemplate restTemplate) {
         this.repo = repo;
         this.emailService = emailService;
+        this.restTemplate = restTemplate;
+    }
+
+    private final String FACTURACION_API_URL = "http://74.249.40.210:8080/api/facturas";
+
+    @Override
+    public List<FacturaDTO> obtenerFacturasExternas() {
+        try {
+            FacturaDTO[] facturas = restTemplate.getForObject(FACTURACION_API_URL, FacturaDTO[].class);
+            return facturas != null ? Arrays.asList(facturas) : Collections.emptyList();
+        } catch (Exception e) {
+            System.err.println("Error al conectar con Facturacion: " + e.getMessage());
+            return Collections.emptyList();
+        }
     }
 
     @Override

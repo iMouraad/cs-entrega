@@ -6,6 +6,7 @@ import ec.edu.uteq.microservicios.msusuarios.api.model.EntregaDto;
 import ec.edu.uteq.microservicios.msusuarios.api.model.EntregaUpdateRequest;
 import ec.edu.uteq.microservicios.msusuarios.mapper.EntregaMapper;
 import ec.edu.uteq.microservicios.msusuarios.model.Entrega;
+import ec.edu.uteq.microservicios.msusuarios.model.FacturaDTO;
 import ec.edu.uteq.microservicios.msusuarios.service.EntregaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,6 +27,11 @@ public class EntregaController implements EntregasApi {
 
     public EntregaController(EntregaService service) {
         this.service = service;
+    }
+
+    @GetMapping("/api/entregas/facturas-externas")
+    public ResponseEntity<List<FacturaDTO>> listarFacturasExternas() {
+        return ResponseEntity.ok(service.obtenerFacturasExternas());
     }
 
     @Override
