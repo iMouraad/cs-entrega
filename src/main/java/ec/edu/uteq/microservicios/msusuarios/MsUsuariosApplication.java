@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableAsync
+@org.springframework.context.annotation.EnableAspectJAutoProxy
 public class MsUsuariosApplication {
 
 	public static void main(String[] args) {
