@@ -33,26 +33,57 @@ public class EntregaServiceImpl implements EntregaService {
     @Value("${api.clientes.url}")
     private String clientesApiUrl;
 
+    @Value("${api.simulation.enabled:false}")
+    private boolean simulationEnabled;
+
     @Override
     public List<FacturaDTO> obtenerFacturasExternas() {
+        if (simulationEnabled) {
+            log.info("Simulación activada: Retornando datos de factura de prueba");
+            return obtenerFacturasDePrueba();
+        }
         try {
             FacturaDTO[] facturas = restTemplate.getForObject(facturacionApiUrl, FacturaDTO[].class);
             return facturas != null ? Arrays.asList(facturas) : Collections.emptyList();
         } catch (Exception e) {
-            log.error("Error al conectar con Facturacion: {}", e.getMessage());
+            log.error("Error al conectar con Facturacion: {}. Retornando lista vacía.", e.getMessage());
             return Collections.emptyList();
         }
     }
 
     @Override
     public List<ClienteDTO> obtenerClientesExternos() {
+        if (simulationEnabled) {
+            log.info("Simulación activada: Retornando datos de cliente de prueba");
+            return obtenerClientesDePrueba();
+        }
         try {
             ClienteDTO[] clientes = restTemplate.getForObject(clientesApiUrl, ClienteDTO[].class);
             return clientes != null ? Arrays.asList(clientes) : Collections.emptyList();
         } catch (Exception e) {
-            log.error("Error al conectar con Clientes: {}", e.getMessage());
+            log.error("Error al conectar con Clientes: {}. Retornando lista vacía.", e.getMessage());
             return Collections.emptyList();
         }
+    }
+
+    private List<FacturaDTO> obtenerFacturasDePrueba() {
+        FacturaDTO f1 = new FacturaDTO();
+        f1.setId(101L); f1.setCliente("Juan Pérez (SIMULADO)"); f1.setTotal(150.50); f1.setFecha("2024-03-10"); f1.setEstado("PAGADO");
+        
+        FacturaDTO f2 = new FacturaDTO();
+        f2.setId(102L); f2.setCliente("Maria Garcia (SIMULADO)"); f2.setTotal(89.99); f2.setFecha("2024-03-11"); f2.setEstado("PENDIENTE");
+        
+        return Arrays.asList(f1, f2);
+    }
+
+    private List<ClienteDTO> obtenerClientesDePrueba() {
+        ClienteDTO c1 = new ClienteDTO();
+        c1.setId(1L); c1.setNombre("Carlos"); c1.setApellido("Soto"); c1.setCedula("1234567890"); c1.setEmail("carlos@ejemplo.com");
+        
+        ClienteDTO c2 = new ClienteDTO();
+        c2.setId(2L); c2.setNombre("Ana"); c2.setApellido("Velez"); c2.setCedula("0987654321"); c2.setEmail("ana@ejemplo.com");
+        
+        return Arrays.asList(c1, c2);
     }
 
     @Override
