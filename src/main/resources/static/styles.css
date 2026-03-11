@@ -170,6 +170,9 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 .data-table tr:last-child td { border-bottom: none; }
 .data-table tr:hover { background: #f9fafb; }
 
+.data-table tr.row-assigned { background: #f1f5f9; opacity: 0.8; }
+.data-table tr.row-assigned td { color: #94a3b8; }
+
 .status-badge.status-PAGADO { background: var(--status-paid); }
 .status-badge.status-ACTIVO { background: var(--status-active); }
 

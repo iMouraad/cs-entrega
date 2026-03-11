@@ -63,13 +63,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <tbody>
         `;
 
+        const assignedOrderIds = new Set(allDeliveries.map(d => parseInt(d.orderId)));
+
         invoices.forEach(inv => {
             const clienteNombre = inv.cliente ? 
                 `${inv.cliente.nombre || ''} ${inv.cliente.apellido || ''}`.trim() : 
                 'Desconocido';
             
+            const isAssigned = assignedOrderIds.has(parseInt(inv.id));
+            
             html += `
-                <tr>
+                <tr class="${isAssigned ? 'row-assigned' : ''}">
                     <td><strong>#${inv.id}</strong></td>
                     <td>
                         <div style="font-weight:600;">${clienteNombre}</div>
@@ -77,12 +81,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     </td>
                     <td style="font-weight:700; color:#2c3e50;">$${inv.total?.toFixed(2) || '0.00'}</td>
                     <td><div style="font-size:12px;">${inv.fecha?.split('T')[0] || 'N/A'}</div></td>
-                    <td><span class="status-badge status-${inv.estado}">${inv.estado || 'PAGADO'}</span></td>
                     <td>
-                        <button class="button primary" style="padding: 6px 12px; font-size: 12px;" 
-                                onclick="window.importInvoice(${inv.id})">
-                            Gestionar
-                        </button>
+                        ${isAssigned ? 
+                            '<span class="status-badge" style="background:#64748b; opacity:0.7;">📦 ASIGNADA</span>' : 
+                            `<span class="status-badge status-${inv.estado}">${inv.estado || 'PAGADO'}</span>`
+                        }
+                    </td>
+                    <td>
+                        ${isAssigned ? 
+                            '<button class="button" disabled style="padding: 6px 12px; font-size: 12px; background:#e2e8f0; color:#94a3b8; cursor:not-allowed;">Listo</button>' : 
+                            `<button class="button primary" style="padding: 6px 12px; font-size: 12px;" 
+                                     onclick="window.importInvoice(${inv.id})">
+                                Gestionar
+                            </button>`
+                        }
                     </td>
                 </tr>
             `;
