@@ -1,5 +1,6 @@
 package ec.edu.uteq.microservicios.msusuarios.service;
 
+import ec.edu.uteq.microservicios.msusuarios.model.ClienteDTO;
 import ec.edu.uteq.microservicios.msusuarios.model.Entrega;
 import ec.edu.uteq.microservicios.msusuarios.model.FacturaDTO;
 //import org.springframework.lang.NonNull;
@@ -15,4 +16,5 @@ public interface EntregaService {
     Optional<Entrega> buscarPorTracking(String trackingNumber);
     Map<String, Long> obtenerEstadisticas();
     List<FacturaDTO> obtenerFacturasExternas();
+    List<ClienteDTO> obtenerClientesExternos();
 }

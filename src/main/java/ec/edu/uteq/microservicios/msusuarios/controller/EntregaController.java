@@ -5,6 +5,7 @@ import ec.edu.uteq.microservicios.msusuarios.api.model.EntregaCreateRequest;
 import ec.edu.uteq.microservicios.msusuarios.api.model.EntregaDto;
 import ec.edu.uteq.microservicios.msusuarios.api.model.EntregaUpdateRequest;
 import ec.edu.uteq.microservicios.msusuarios.mapper.EntregaMapper;
+import ec.edu.uteq.microservicios.msusuarios.model.ClienteDTO;
 import ec.edu.uteq.microservicios.msusuarios.model.Entrega;
 import ec.edu.uteq.microservicios.msusuarios.model.FacturaDTO;
 import ec.edu.uteq.microservicios.msusuarios.service.EntregaService;
@@ -32,6 +33,11 @@ public class EntregaController implements EntregasApi {
     @GetMapping("/api/entregas/facturas-externas")
     public ResponseEntity<List<FacturaDTO>> listarFacturasExternas() {
         return ResponseEntity.ok(service.obtenerFacturasExternas());
+    }
+
+    @GetMapping("/api/entregas/clientes-externos")
+    public ResponseEntity<List<ClienteDTO>> listarClientesExternos() {
+        return ResponseEntity.ok(service.obtenerClientesExternos());
     }
 
     @Override

@@ -1,15 +1,19 @@
 package ec.edu.uteq.microservicios.msusuarios.service.impl;
 
+import ec.edu.uteq.microservicios.msusuarios.model.ClienteDTO;
 import ec.edu.uteq.microservicios.msusuarios.model.Entrega;
 import ec.edu.uteq.microservicios.msusuarios.model.FacturaDTO;
 import ec.edu.uteq.microservicios.msusuarios.repository.EntregaRepository;
 import ec.edu.uteq.microservicios.msusuarios.service.EntregaService;
 import ec.edu.uteq.microservicios.msusuarios.service.EmailService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
+@Slf4j
 @Service
 public class EntregaServiceImpl implements EntregaService {
 
@@ -23,15 +27,30 @@ public class EntregaServiceImpl implements EntregaService {
         this.restTemplate = restTemplate;
     }
 
-    private final String FACTURACION_API_URL = "http://74.249.40.210:8080/api/facturas";
+    @Value("${api.facturacion.url}")
+    private String facturacionApiUrl;
+
+    @Value("${api.clientes.url}")
+    private String clientesApiUrl;
 
     @Override
     public List<FacturaDTO> obtenerFacturasExternas() {
         try {
-            FacturaDTO[] facturas = restTemplate.getForObject(FACTURACION_API_URL, FacturaDTO[].class);
+            FacturaDTO[] facturas = restTemplate.getForObject(facturacionApiUrl, FacturaDTO[].class);
             return facturas != null ? Arrays.asList(facturas) : Collections.emptyList();
         } catch (Exception e) {
-            System.err.println("Error al conectar con Facturacion: " + e.getMessage());
+            log.error("Error al conectar con Facturacion: {}", e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public List<ClienteDTO> obtenerClientesExternos() {
+        try {
+            ClienteDTO[] clientes = restTemplate.getForObject(clientesApiUrl, ClienteDTO[].class);
+            return clientes != null ? Arrays.asList(clientes) : Collections.emptyList();
+        } catch (Exception e) {
+            log.error("Error al conectar con Clientes: {}", e.getMessage());
             return Collections.emptyList();
         }
     }
