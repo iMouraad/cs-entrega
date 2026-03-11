@@ -20,6 +20,71 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     const resetSearchBtn = document.getElementById('reset-search-btn');
 
+    const invoicesModal = document.getElementById('invoices-modal');
+    const invoicesContent = document.getElementById('invoices-content');
+    const externalInvoicesBtn = document.getElementById('external-invoices-btn');
+    const closeInvoicesBtn = document.getElementById('close-invoices-modal-btn');
+
+    // --- FUNCIONES FACTURAS EXTERNAS ---
+    const fetchExternalInvoices = async () => {
+        invoicesContent.innerHTML = '<div class="loader">Cargando facturas desde el sistema externo...</div>';
+        try {
+            const response = await fetch(`${apiUrl}/facturas-externas`);
+            if (!response.ok) throw new Error('Error al obtener facturas');
+            const data = await response.json();
+            renderInvoices(data);
+        } catch (e) {
+            invoicesContent.innerHTML = `<div class="error-msg">❌ No se pudo conectar con el microservicio de facturación: ${e.message}</div>`;
+        }
+    };
+
+    const renderInvoices = (invoices) => {
+        if (!invoices || invoices.length === 0) {
+            invoicesContent.innerHTML = '<p class="no-data">No hay facturas registradas en el sistema externo.</p>';
+            return;
+        }
+
+        let html = `
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Total</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        invoices.forEach(inv => {
+            html += `
+                <tr>
+                    <td><strong>#${inv.id}</strong></td>
+                    <td>${inv.cliente || 'Desconocido'}</td>
+                    <td>$${inv.total?.toFixed(2) || '0.00'}</td>
+                    <td>${inv.fecha || 'N/A'}</td>
+                    <td><span class="status-badge status-${inv.estado}">${inv.estado || 'PENDIENTE'}</span></td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        invoicesContent.innerHTML = html;
+    };
+
+    externalInvoicesBtn.onclick = () => {
+        invoicesModal.classList.remove('hidden');
+        backdrop.classList.remove('hidden');
+        fetchExternalInvoices();
+    };
+
+    closeInvoicesBtn.onclick = () => {
+        invoicesModal.classList.add('hidden');
+        backdrop.classList.add('hidden');
+    };
+
     // --- NOTIFICACIONES TOAST ---
     const showToast = (message, type = 'success') => {
         const container = document.getElementById('toast-container');

@@ -15,8 +15,23 @@
 <div class="container">
     <header>
         <h1>Gestión de Entregas</h1>
-        <button id="add-delivery-btn" class="button primary">Agregar Entrega</button>
+        <div class="header-actions">
+            <button id="external-invoices-btn" class="button secondary">Ver Facturas Externas</button>
+            <button id="add-delivery-btn" class="button primary">Agregar Entrega</button>
+        </div>
     </header>
+
+    <div id="invoices-modal" class="modal hidden large-modal">
+        <div class="modal-header">
+            <h2>Facturas del Sistema Externo</h2>
+            <button id="close-invoices-modal-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div id="invoices-content">
+                <p>Cargando facturas...</p>
+            </div>
+        </div>
+    </div>
 
     <div id="stats-dashboard" class="stats-dashboard">
         <div class="stat-card stat-pendiente" id="filter-pendiente">

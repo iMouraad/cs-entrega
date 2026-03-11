@@ -157,7 +157,21 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 .timeline-item h4 { margin: 0 0 10px 0; font-size: 16px; font-weight: 700; color: var(--text); }
 .timeline-item p { margin: 0; font-size: 14px; color: var(--text-muted); line-height: 1.5; }
 
-/* Otros */
+.header-actions { display: flex; gap: 12px; }
+.button.secondary { background: #64748b; color: white; }
+.button.secondary:hover { background: #475569; transform: translateY(-1px); }
+
+.large-modal { max-width: 850px !important; }
+.data-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.data-table th { text-align: left; padding: 14px; background: #f8fafc; border-bottom: 2px solid #e2e8f0; font-size: 13px; color: var(--text-muted); text-transform: uppercase; }
+.data-table td { padding: 14px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+.data-table tr:hover { background: #f8fafc; }
+
+.loader { padding: 40px; text-align: center; color: var(--text-muted); font-size: 15px; }
+.error-msg { padding: 25px; background: #fef2f2; border: 1px solid #fee2e2; border-radius: 12px; color: #b91c1c; font-size: 14px; line-height: 1.6; }
+.no-data { text-align: center; padding: 40px; color: var(--text-muted); }
+
+/* Animaciones */
 .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 10000; }
 .toast {
     background: #1e293b; color: white; padding: 16px 24px; border-radius: 12px;
