@@ -280,6 +280,39 @@ document.addEventListener('DOMContentLoaded', () => {
     backdrop.onclick = closeModal;
     drawerBackdrop.onclick = closeModal;
 
+    const fetchOrderData = async () => {
+        const orderId = document.getElementById('order-id').value;
+        if (!orderId) {
+            showToast('Ingresa un ID de Orden primero', 'error');
+            return;
+        }
+
+        const btn = document.getElementById('btn-fetch-order');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '⌛...';
+        btn.disabled = true;
+
+        try {
+            const response = await fetch(`${apiUrl}/preparar/${orderId}`);
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('address').value = data.address || '';
+                document.getElementById('email').value = data.email || '';
+                document.getElementById('status').value = data.status || 'PENDIENTE';
+                showToast('Datos de orden recuperados');
+            } else {
+                showToast('Orden no encontrada en registros externos', 'error');
+            }
+        } catch (e) {
+            showToast('Error al conectar con el servidor', 'error');
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    };
+
+    document.getElementById('btn-fetch-order').onclick = fetchOrderData;
+
     deliveryForm.onsubmit = (e) => {
         e.preventDefault();
         const data = {
