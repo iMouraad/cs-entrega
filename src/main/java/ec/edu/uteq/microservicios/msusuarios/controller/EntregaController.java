@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import ec.edu.uteq.microservicios.msusuarios.service.PdfService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import java.net.URI;
 import java.util.List;
@@ -25,9 +28,11 @@ import java.util.Map;
 public class EntregaController implements EntregasApi {
 
     private final EntregaService service;
+    private final PdfService pdfService;
 
-    public EntregaController(EntregaService service) {
+    public EntregaController(EntregaService service, PdfService pdfService) {
         this.service = service;
+        this.pdfService = pdfService;
     }
 
     @GetMapping("/api/entregas/facturas-externas")
@@ -93,5 +98,18 @@ public class EntregaController implements EntregasApi {
     @GetMapping("/api/entregas/estadisticas")
     public ResponseEntity<Map<String, Long>> obtenerEstadisticas() {
         return ResponseEntity.ok(service.obtenerEstadisticas());
+    }
+
+    @GetMapping("/api/entregas/{id}/pdf")
+    public ResponseEntity<byte[]> descargarGuiaPdf(@PathVariable Long id) {
+        Entrega entrega = service.buscarPorId(id)
+                .orElseThrow(() -> new RuntimeException("Entrega no encontrada"));
+        
+        byte[] pdf = pdfService.generateDeliveryNote(entrega);
+        
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=guia_entrega_" + id + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 }

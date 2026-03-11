@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 import java.util.*;
 
@@ -37,33 +38,33 @@ public class EntregaServiceImpl implements EntregaService {
     private boolean simulationEnabled;
 
     @Override
+    @CircuitBreaker(name = "facturacionCB", fallbackMethod = "fallbackObtenerFacturas")
     public List<FacturaDTO> obtenerFacturasExternas() {
         if (simulationEnabled) {
-            log.info("Simulación activada: Retornando datos de factura de prueba");
             return obtenerFacturasDePrueba();
         }
-        try {
-            FacturaDTO[] facturas = restTemplate.getForObject(facturacionApiUrl, FacturaDTO[].class);
-            return facturas != null ? Arrays.asList(facturas) : Collections.emptyList();
-        } catch (Exception e) {
-            log.error("Error al conectar con Facturacion: {}. Retornando lista vacía.", e.getMessage());
-            return Collections.emptyList();
-        }
+        FacturaDTO[] facturas = restTemplate.getForObject(facturacionApiUrl, FacturaDTO[].class);
+        return facturas != null ? Arrays.asList(facturas) : Collections.emptyList();
+    }
+
+    public List<FacturaDTO> fallbackObtenerFacturas(Throwable t) {
+        log.warn("Circuit Breaker activado para Facturas. Razón: {}. Retornando simulación.", t.getMessage());
+        return obtenerFacturasDePrueba();
     }
 
     @Override
+    @CircuitBreaker(name = "clientesCB", fallbackMethod = "fallbackObtenerClientes")
     public List<ClienteDTO> obtenerClientesExternos() {
         if (simulationEnabled) {
-            log.info("Simulación activada: Retornando datos de cliente de prueba");
             return obtenerClientesDePrueba();
         }
-        try {
-            ClienteDTO[] clientes = restTemplate.getForObject(clientesApiUrl, ClienteDTO[].class);
-            return clientes != null ? Arrays.asList(clientes) : Collections.emptyList();
-        } catch (Exception e) {
-            log.error("Error al conectar con Clientes: {}. Retornando lista vacía.", e.getMessage());
-            return Collections.emptyList();
-        }
+        ClienteDTO[] clientes = restTemplate.getForObject(clientesApiUrl, ClienteDTO[].class);
+        return clientes != null ? Arrays.asList(clientes) : Collections.emptyList();
+    }
+
+    public List<ClienteDTO> fallbackObtenerClientes(Throwable t) {
+        log.warn("Circuit Breaker activado para Clientes. Razón: {}. Retornando simulación.", t.getMessage());
+        return obtenerClientesDePrueba();
     }
 
     private List<FacturaDTO> obtenerFacturasDePrueba() {
@@ -102,6 +103,7 @@ public class EntregaServiceImpl implements EntregaService {
         entregaPrevia.setStatus(Entrega.Estado.PENDIENTE);
 
         if (factura != null) {
+            entregaPrevia.setCustomerName(factura.getCliente());
             // 2. Intentar buscar al cliente para obtener dirección y email real
             List<ClienteDTO> clientes = obtenerClientesExternos();
             // Buscamos por nombre o podríamos buscar por ID si la factura lo tuviera
@@ -168,6 +170,7 @@ public class EntregaServiceImpl implements EntregaService {
 
             existente.setOrderId(entrega.getOrderId());
             existente.setAddress(entrega.getAddress());
+            existente.setCustomerName(entrega.getCustomerName());
 
             boolean cambioEstado = existente.getStatus() != entrega.getStatus();
             existente.setStatus(entrega.getStatus());
@@ -244,6 +247,11 @@ public class EntregaServiceImpl implements EntregaService {
             default -> false;
         };
         if (!esValido) throw new RuntimeException("Transición de estado no permitida");
+    }
+
+    @Override
+    public Optional<Entrega> buscarPorId(Long id) {
+        return repo.findById(id);
     }
 
     private void enviarNotificacion(Entrega entrega, String asunto, String cuerpo) {

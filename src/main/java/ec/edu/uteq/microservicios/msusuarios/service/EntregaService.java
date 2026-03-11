@@ -18,4 +18,5 @@ public interface EntregaService {
     List<FacturaDTO> obtenerFacturasExternas();
     List<ClienteDTO> obtenerClientesExternos();
     Entrega prepararEntregaPorOrden(Long orderId);
+    Optional<Entrega> buscarPorId(Long id);
 }

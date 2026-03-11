@@ -19,6 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const drawerBackdrop = document.getElementById('drawer-backdrop');
     const searchInput = document.getElementById('search-input');
     const resetSearchBtn = document.getElementById('reset-search-btn');
+    const mapModal = document.getElementById('map-modal');
+    const closeMapBtn = document.getElementById('close-map-btn');
+    let map = null;
+    let marker = null;
 
     const invoicesModal = document.getElementById('invoices-modal');
     const invoicesContent = document.getElementById('invoices-content');
@@ -173,6 +177,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const downloadPdf = (id) => {
+        window.location.href = `${apiUrl}/${id}/pdf`;
+    };
+
+    const showOnMap = (address) => {
+        mapModal.classList.remove('hidden');
+        document.getElementById('map-address-text').textContent = "Buscando: " + address;
+        
+        if (!map) {
+            map = L.map('map').setView([-1.024, -79.46], 13); // UTEQ Quevedo por defecto
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+        }
+
+        // Simulación de Geocodificación (en un entorno real usaríamos Nominatim)
+        // Para fines demostrativos, ponemos un punto aleatorio cerca de Quevedo basado en el texto
+        setTimeout(() => {
+            const lat = -1.02 + (Math.random() * 0.02);
+            const lng = -79.46 + (Math.random() * 0.02);
+            const pos = [lat, lng];
+            
+            if (marker) marker.remove();
+            marker = L.marker(pos).addTo(map)
+                .bindPopup(`<b>Destino:</b><br>${address}`)
+                .openPopup();
+            
+            map.setView(pos, 15);
+            map.invalidateSize();
+        }, 500);
+    };
+
     const deleteDelivery = async (id) => {
         if (!confirm('¿Eliminar esta entrega permanentemente?')) return;
         try {
@@ -204,18 +241,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="status-badge ${config.class}">${config.icon} ${config.label}</span>
                 </div>
                 <div class="card-body">
+                    <p><strong>👤 Cliente:</strong> ${d.customerName || 'Inquilino'}</p>
                     <p><strong>📍 Dirección:</strong> ${d.address}</p>
                     <p><strong>📧 Email:</strong> ${d.email || 'N/A'}</p>
                     <p><strong>📦 Seguimiento:</strong> ${d.trackingNumber || 'N/A'}</p>
                 </div>
-                <div class="card-footer">
-                    <button class="card-button edit-btn">Editar</button>
-                    <button class="card-button history-btn">📜 Historial</button>
-                    <button class="card-button delete-btn">Eliminar</button>
+                <div class="card-footer" style="flex-wrap: wrap; gap: 4px;">
+                    <button class="card-button edit-btn" style="flex: 1;">Editar</button>
+                    <button class="card-button pdf-btn" style="flex: 1; background: #e74c3c; color: white;">📄 PDF</button>
+                    <button class="card-button map-btn" style="flex: 1; background: #27ae60; color: white;">📍 Mapa</button>
+                    <button class="card-button history-btn" style="flex: 1;">📜 Historial</button>
+                    <button class="card-button delete-btn" style="flex: 1; background: #eee; color: #666;">Eliminar</button>
                 </div>
             `;
             deliveriesGrid.appendChild(card);
             card.querySelector('.edit-btn').onclick = () => openModalForEdit(d);
+            card.querySelector('.pdf-btn').onclick = () => downloadPdf(d.id);
+            card.querySelector('.map-btn').onclick = () => showOnMap(d.address);
             card.querySelector('.delete-btn').onclick = () => deleteDelivery(d.id);
             card.querySelector('.history-btn').onclick = () => openHistory(d);
         });
@@ -252,6 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-title').textContent = 'Editar Entrega';
         document.getElementById('delivery-id').value = d.id;
         document.getElementById('order-id').value = d.orderId;
+        document.getElementById('customer-name').value = d.customerName || '';
         document.getElementById('address').value = d.address;
         document.getElementById('email').value = d.email || '';
         document.getElementById('tracking-number').value = d.trackingNumber || '';
@@ -271,12 +314,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-title').textContent = 'Agregar Entrega';
         deliveryForm.reset();
         document.getElementById('delivery-id').value = '';
+        document.getElementById('customer-name').value = '';
         modal.classList.remove('hidden');
         backdrop.classList.remove('hidden');
     };
 
     document.getElementById('close-modal-btn').onclick = closeModal;
     document.getElementById('close-drawer-btn').onclick = closeModal;
+    closeMapBtn.onclick = () => { mapModal.classList.add('hidden'); };
     backdrop.onclick = closeModal;
     drawerBackdrop.onclick = closeModal;
 
@@ -296,6 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${apiUrl}/preparar/${orderId}`);
             if (response.ok) {
                 const data = await response.json();
+                document.getElementById('customer-name').value = data.customerName || '';
                 document.getElementById('address').value = data.address || '';
                 document.getElementById('email').value = data.email || '';
                 document.getElementById('status').value = data.status || 'PENDIENTE';
@@ -317,6 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const data = {
             orderId: parseInt(document.getElementById('order-id').value),
+            customerName: document.getElementById('customer-name').value,
             address: document.getElementById('address').value,
             email: document.getElementById('email').value,
             trackingNumber: document.getElementById('tracking-number').value,

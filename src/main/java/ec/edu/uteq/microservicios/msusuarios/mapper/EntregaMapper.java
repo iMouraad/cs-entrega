@@ -26,6 +26,7 @@ public class EntregaMapper {
         dto.setId(e.getId());
         dto.setOrderId(e.getOrderId());
         dto.setAddress(e.getAddress());
+        dto.setCustomerName(toJsonNullable(e.getCustomerName()));
 
         dto.setTrackingNumber(toJsonNullable(e.getTrackingNumber()));
         dto.setEmail(toJsonNullable(e.getEmail()));
@@ -44,6 +45,8 @@ public class EntregaMapper {
         Entrega e = new Entrega();
         e.setOrderId(req.getOrderId());
         e.setAddress(req.getAddress());
+        e.setCustomerName(fromJsonNullable(req.getCustomerName()));
+
 
         e.setTrackingNumber(fromJsonNullable(req.getTrackingNumber()));
         e.setEmail(fromJsonNullable(req.getEmail()));
@@ -61,6 +64,8 @@ public class EntregaMapper {
         Entrega e = new Entrega();
         e.setOrderId(req.getOrderId());
         e.setAddress(req.getAddress());
+        e.setCustomerName(fromJsonNullable(req.getCustomerName()));
+
 
         e.setTrackingNumber(fromJsonNullable(req.getTrackingNumber()));
         e.setEmail(fromJsonNullable(req.getEmail()));

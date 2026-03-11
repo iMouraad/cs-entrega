@@ -182,3 +182,14 @@ header { display: flex; justify-content: space-between; align-items: center; mar
 .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; }
 .hidden { display: none !important; }
 .close-btn { background: #f1f5f9; border: none; font-size: 18px; cursor: pointer; border-radius: 4px; width: 28px; height: 28px; color: var(--text-muted); }
+
+/* Nuevos Estilos */
+.card-button { transition: 0.2s; border: 1px solid transparent; }
+.card-button:hover { filter: brightness(0.95); transform: scale(1.02); }
+.pdf-btn:hover { background: #c0392b !important; }
+.map-btn:hover { background: #219150 !important; }
+
+/* Ajustes Leaflet */
+.leaflet-container { font-family: inherit; z-index: 100 !important; }
+.leaflet-popup-content-wrapper { border-radius: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+.leaflet-popup-content { font-size: 14px; margin: 10px 14px; }
