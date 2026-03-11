@@ -52,30 +52,54 @@ document.addEventListener('DOMContentLoaded', () => {
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Orden</th>
                         <th>Cliente</th>
                         <th>Total</th>
                         <th>Fecha</th>
                         <th>Estado</th>
+                        <th>Acción</th>
                     </tr>
                 </thead>
                 <tbody>
         `;
 
         invoices.forEach(inv => {
+            const clienteNombre = inv.cliente ? 
+                `${inv.cliente.nombre || ''} ${inv.cliente.apellido || ''}`.trim() : 
+                'Desconocido';
+            
             html += `
                 <tr>
                     <td><strong>#${inv.id}</strong></td>
-                    <td>${inv.cliente || 'Desconocido'}</td>
-                    <td>$${inv.total?.toFixed(2) || '0.00'}</td>
-                    <td>${inv.fecha || 'N/A'}</td>
-                    <td><span class="status-badge status-${inv.estado}">${inv.estado || 'PENDIENTE'}</span></td>
+                    <td>
+                        <div style="font-weight:600;">${clienteNombre}</div>
+                        <div style="font-size:11px; color:#666;">${inv.cliente?.email || ''}</div>
+                    </td>
+                    <td style="font-weight:700; color:#2c3e50;">$${inv.total?.toFixed(2) || '0.00'}</td>
+                    <td><div style="font-size:12px;">${inv.fecha?.split('T')[0] || 'N/A'}</div></td>
+                    <td><span class="status-badge status-${inv.estado}">${inv.estado || 'PAGADO'}</span></td>
+                    <td>
+                        <button class="button primary" style="padding: 6px 12px; font-size: 12px;" 
+                                onclick="window.importInvoice(${inv.id})">
+                            Gestionar
+                        </button>
+                    </td>
                 </tr>
             `;
         });
 
         html += '</tbody></table>';
         invoicesContent.innerHTML = html;
+    };
+
+    // Exponer función globalmente para los botones en el HTML generado por JS
+    window.importInvoice = async (id) => {
+        invoicesModal.classList.add('hidden');
+        document.getElementById('order-id').value = id;
+        deliveryForm.reset();
+        document.getElementById('order-id').value = id;
+        modal.classList.remove('hidden');
+        await fetchOrderData();
     };
 
     externalInvoicesBtn.onclick = () => {

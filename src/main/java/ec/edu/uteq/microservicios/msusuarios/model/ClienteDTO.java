@@ -9,6 +9,7 @@ public class ClienteDTO {
     private Long id;
     private String nombre;
     private String apellido;
+    @com.fasterxml.jackson.annotation.JsonProperty("correo")
     private String email;
     private String cedula;
     private String telefono;

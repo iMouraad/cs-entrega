@@ -69,10 +69,30 @@ public class EntregaServiceImpl implements EntregaService {
 
     private List<FacturaDTO> obtenerFacturasDePrueba() {
         FacturaDTO f1 = new FacturaDTO();
-        f1.setId(101L); f1.setCliente("Juan Pérez (SIMULADO)"); f1.setTotal(150.50); f1.setFecha("2024-03-10"); f1.setEstado("PAGADO");
+        f1.setId(101L); 
+        
+        ClienteDTO c1 = new ClienteDTO();
+        c1.setNombre("Juan Pérez");
+        c1.setApellido("(SIMULADO)");
+        c1.setDireccion("Calle 6 de octubre, Mexico");
+        c1.setEmail("juan@perez.com");
+        
+        f1.setCliente(c1);
+        f1.setTotal(150.50); f1.setFecha("2024-03-10"); f1.setEstado("PAGADO");
+        f1.setDetalles(new ArrayList<>());
         
         FacturaDTO f2 = new FacturaDTO();
-        f2.setId(102L); f2.setCliente("Maria Garcia (SIMULADO)"); f2.setTotal(89.99); f2.setFecha("2024-03-11"); f2.setEstado("PENDIENTE");
+        f2.setId(102L);
+        
+        ClienteDTO c2 = new ClienteDTO();
+        c2.setNombre("Maria Garcia");
+        c2.setApellido("(SIMULADO)");
+        c2.setDireccion("av quevedo - las tecas");
+        c2.setEmail("maria@garcia.com");
+        
+        f2.setCliente(c2);
+        f2.setTotal(89.99); f2.setFecha("2024-03-11"); f2.setEstado("PENDIENTE");
+        f2.setDetalles(new ArrayList<>());
         
         return Arrays.asList(f1, f2);
     }
@@ -103,20 +123,16 @@ public class EntregaServiceImpl implements EntregaService {
         entregaPrevia.setStatus(Entrega.Estado.PENDIENTE);
 
         if (factura != null) {
-            entregaPrevia.setCustomerName(factura.getCliente());
-            // 2. Intentar buscar al cliente para obtener dirección y email real
-            List<ClienteDTO> clientes = obtenerClientesExternos();
-            // Buscamos por nombre o podríamos buscar por ID si la factura lo tuviera
-            ClienteDTO cliente = clientes.stream()
-                    .filter(c -> factura.getCliente().contains(c.getNombre()))
-                    .findFirst()
-                    .orElse(null);
-
+            ClienteDTO cliente = factura.getCliente();
             if (cliente != null) {
-                entregaPrevia.setAddress(cliente.getDireccion());
-                entregaPrevia.setEmail(cliente.getEmail());
+                String nombreCompleto = cliente.getNombre();
+                if (cliente.getApellido() != null) nombreCompleto += " " + cliente.getApellido();
+                
+                entregaPrevia.setCustomerName(nombreCompleto);
+                entregaPrevia.setAddress(cliente.getDireccion() != null ? cliente.getDireccion() : "Dirección no especificada");
+                entregaPrevia.setEmail(cliente.getEmail() != null ? cliente.getEmail() : "cliente@ejemplo.com");
             } else {
-                // Datos por defecto si no hay match de cliente
+                entregaPrevia.setCustomerName("Cliente sin nombre");
                 entregaPrevia.setAddress("Dirección pendiente de confirmar");
                 entregaPrevia.setEmail("cliente@ejemplo.com");
             }

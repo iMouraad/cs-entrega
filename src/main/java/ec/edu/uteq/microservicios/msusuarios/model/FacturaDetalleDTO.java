@@ -5,11 +5,11 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FacturaDTO {
+public class FacturaDetalleDTO {
     private Long id;
-    private ClienteDTO cliente;
-    private java.util.List<FacturaDetalleDTO> detalles;
-    private Double total;
-    private String fecha;
-    private String estado;
+    private Integer cantidad;
+    private Double precioUnitario;
+    private Double subtotal;
+    private Long productoId;
+    private String productoNombre;
 }
