@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'delivery-card';
             card.innerHTML = `
                 <div class="card-header">
-                    <h3>Orden #${d.orderId}</h3>
+                    <h3>Entrega #${d.orderId}</h3>
                     <span class="status-badge ${config.class}">${config.icon} ${config.label}</span>
                 </div>
                 <div class="card-body">
@@ -160,12 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const content = document.getElementById('drawer-content');
         content.innerHTML = `
             <div class="drawer-info-box">
-                <p><strong>Orden:</strong> #${d.orderId}</p>
+                <p><strong>Entrega:</strong> #${d.orderId}</p>
                 <p><strong>Cliente:</strong> ${d.email}</p>
                 <p><strong>Destino:</strong> ${d.address}</p>
             </div>
             <div class="timeline">
-                <div class="timeline-item"><h4>Orden Registrada</h4><p>ID de Orden #${d.orderId} validado en sistema.</p></div>
+                <div class="timeline-item"><h4>Entrega Registrada</h4><p>ID de Entrega #${d.orderId} validado en sistema.</p></div>
                 <div class="timeline-item"><h4>Estado Actual: ${d.status}</h4><p>Notificación enviada al correo del cliente.</p></div>
             </div>
         `;
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchOrderData = async () => {
         const orderId = document.getElementById('order-id').value;
         if (!orderId) {
-            showToast('Ingresa un ID de Orden primero', 'error');
+            showToast('Ingresa un ID de Entrega primero', 'error');
             return;
         }
 
