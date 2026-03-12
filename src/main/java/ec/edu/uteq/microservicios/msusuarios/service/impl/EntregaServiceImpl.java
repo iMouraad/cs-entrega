@@ -109,7 +109,7 @@ public class EntregaServiceImpl implements EntregaService {
 
     @Override
     public Entrega prepararEntregaPorOrden(Long orderId) {
-        log.info("Preparando datos para la Orden #{}", orderId);
+        log.info("Preparando datos para la Entrega #{}", orderId);
         
         // 1. Buscar la Factura/Orden
         List<FacturaDTO> facturas = obtenerFacturasExternas();
@@ -154,9 +154,9 @@ public class EntregaServiceImpl implements EntregaService {
     public Entrega crear(Entrega entrega) {
         if (entrega == null) throw new RuntimeException("Datos nulos");
 
-        // VALIDACIÓN: Evitar ID de Orden duplicado
+        // VALIDACIÓN: Evitar ID de Entrega duplicado
         if (repo.existsByOrderId(entrega.getOrderId())) {
-            throw new RuntimeException("Error: Ya existe una entrega con la Orden #" + entrega.getOrderId());
+            throw new RuntimeException("Error: Ya existe una entrega con el ID de Entrega #" + entrega.getOrderId());
         }
 
         if (entrega.getStatus() == null) {
@@ -168,7 +168,7 @@ public class EntregaServiceImpl implements EntregaService {
         String cuerpo = construirMensaje(guardada, "¡Tu pedido ha sido registrado!",
                 "Estamos preparando todo para procesar tu entrega lo antes posible.");
 
-        enviarNotificacion(guardada, "Confirmación de Pedido #" + guardada.getOrderId(), cuerpo);
+        enviarNotificacion(guardada, "Confirmación de Entrega #" + guardada.getOrderId(), cuerpo);
 
         return guardada;
     }
@@ -179,7 +179,7 @@ public class EntregaServiceImpl implements EntregaService {
 
             Optional<Entrega> otraConMismoId = repo.findByOrderId(entrega.getOrderId());
             if (otraConMismoId.isPresent() && !otraConMismoId.get().getId().equals(id)) {
-                throw new RuntimeException("Error: El ID de Orden #" + entrega.getOrderId() + " ya está en uso.");
+                throw new RuntimeException("Error: El ID de Entrega #" + entrega.getOrderId() + " ya está en uso.");
             }
 
             validarCambioEstado(existente.getStatus(), entrega.getStatus());
@@ -218,7 +218,7 @@ public class EntregaServiceImpl implements EntregaService {
                 }
 
                 String cuerpo = construirMensaje(actualizada, titulo, nota);
-                enviarNotificacion(actualizada, "Novedades en tu Orden #" + actualizada.getOrderId(), cuerpo);
+                enviarNotificacion(actualizada, "Novedades en tu Entrega #" + actualizada.getOrderId(), cuerpo);
             }
             return actualizada;
         }).orElseThrow(() -> new RuntimeException("No encontrado"));
@@ -229,7 +229,7 @@ public class EntregaServiceImpl implements EntregaService {
         return saludo + "\n\n" +
                 "Detalles del envío:\n" +
                 "--------------------------------------\n" +
-                "📦 Orden: #" + e.getOrderId() + "\n" +
+                "📦 Entrega: #" + e.getOrderId() + "\n" +
                 "📍 Estado: " + e.getStatus() + "\n" +
                 "🏠 Dirección: " + e.getAddress() + "\n" +
                 "🔢 Seguimiento: " + (e.getTrackingNumber() != null ? e.getTrackingNumber() : "No asignado") + "\n" +
